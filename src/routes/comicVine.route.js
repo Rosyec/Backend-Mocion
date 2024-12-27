@@ -3,18 +3,30 @@ import $axios from "../axiosConfig.js";
 
 const router = Router();
 
-router.get("/getComicsBy", async (req = Request, resp = Response) => {
-  if (!req.params.type) {
-    return resp.status(403).json({
-      status_code: 403,
-      error: "Bad Request",
-      message: "Hace falta el parametro (type).",
-    });
-  }
+router.get("/getComics", async (req = Request, resp = Response) => {
   try {
-    const { data } = await $axios.get("/characters");
+    const { data } = await $axios.get(`/issues`);
     return resp.status(200).json({
       ...data,
+    });
+  } catch (error) {
+    throw error;
+  }
+});
+
+router.get("/getComicById", async (req = Request, resp = Response) => {
+  try {
+    if (!req.query.id) {
+      return resp.status(403).json({
+        status_code: 403,
+        error: "Bad Request",
+        message: "Hace falta el parametro (id).",
+      });
+    }
+    const { data } = await $axios.get(`/issues?&filter=id:${req.query.id}`);
+    return resp.status(200).json({
+      ...data,
+      results: data.results[0],
     });
   } catch (error) {
     throw error;
