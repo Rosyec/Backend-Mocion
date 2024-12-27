@@ -5,7 +5,11 @@ const router = Router();
 
 router.get("/getComics", async (req = Request, resp = Response) => {
   try {
-    const { data } = await $axios.get(`/issues`);
+    let url = '/issues'
+    if (req.query.sort) {
+      url += `?sort=${req.query.sort}`
+    }
+    const { data } = await $axios.get(`${url}`);
     return resp.status(200).json({
       ...data,
     });
